@@ -1,0 +1,158 @@
+<template>
+    <el-container>
+        <login-header :headerContent = 'headerContent'></login-header>
+        <el-main>
+            <el-input class="input" placeholder="手机号" prefix-icon="el-icon-ali-mobilephone" v-model="phone"></el-input>
+            <el-input class="input" placeholder="短信验证码" prefix-icon="el-icon-ali-mail" v-model="codeValue">
+                <el-button slot="append" @click="getCodeValue()">
+                    <span v-show="show">获取验证码</span>
+                    <span v-show="!show">{{count}} s</span>
+                </el-button>
+            </el-input>
+            <el-row :gutter="20">
+                <el-col :span="12">
+                    <el-button class="button" type="danger" round>稍后再说</el-button>
+                </el-col>
+                <el-col :span="12">
+                    <el-button class="button" type="primary" @click="bindPhone()" round>绑定手机号</el-button>
+                </el-col>
+            </el-row>
+        </el-main>
+        <el-footer></el-footer>
+    </el-container>
+</template>
+
+<script>
+import LoginHeader from "./LoginHeader.vue";
+const TIME_COUNT = 60;
+
+export default {
+  name: "BindPhone",
+  data: function() {
+    return {
+      phone: "",
+      codeValue: "",
+      headerContent: "绑定手机号",
+      timer : null,
+      count : '',
+      show : true
+    };
+  },
+  components: {
+    "login-header": LoginHeader
+  },
+  methods : {
+      getCodeValue:function () {
+        if(this.phone === "" || this.phone === null) {
+            this.$message({
+                message : '手机号码不能为空',
+                type : 'error',
+                center : true
+            });
+            return false;
+        }
+        if(!(/^1(3|4|5|7|8)\d{9}$/.test(this.phone))) {
+            this.$message({
+                message : '手机号码有误，请重填',
+                type : 'error',
+                center : true
+            });
+            return false;
+        }
+        if (!this.timer) {
+            this.count = TIME_COUNT;
+            this.show = false;
+            this.timer = setInterval(() => {
+                if (this.count > 0 && this.count <= TIME_COUNT) {
+                    this.count--;
+                } else {
+                    this.show = true;
+                    clearInterval(this.timer);
+                    this.timer = null;  
+                }
+            }, 1000);
+        }
+        let postData = {
+            'phone' : this.phone
+        };
+        let hashString = this.$md5(this.getDateString() + 'sms');
+        let config = {
+            headers : {
+                'Monster' : hashString
+            }
+        }
+        // 发送短信
+        this.$http
+            .post ('/sms',postData,config)
+            .then (response => {
+                let json = response.data;
+                if(json.success === false) {
+                    this.$message({
+                        message : json.message,
+                        type : 'error',
+                        center : true
+                    });
+                }
+            })
+            .catch (response => {
+                this.$message({
+                    message : '连接服务器失败',
+                    type : 'error',
+                    center : true
+                });
+            });
+      },
+      bindPhone : function () {
+        if(this.phone === null || this.phone === "") {
+            this.$message({
+                message : '手机号码不能为空',
+                type : 'error',
+                center : true
+            });
+            return false;
+        }
+        if(!(/^1(3|4|5|7|8)\d{9}$/.test(this.phone))) {
+            this.$message({
+                message : '手机号码有误，请重填',
+                type : 'error',
+                center : true
+            });
+            return false;
+        }
+        if(this.codeValue === null || this.codeValue === "") {
+            this.$message({
+                message : '验证码不能为空',
+                type : 'error',
+                center : true
+            });
+            return false;
+        }
+        let validateData = {
+            phone : this.phone,
+            codeValue : this.codeValue
+        };
+        this.$http
+            .post ('/sms/validate',validateData)
+            .then (response => {
+                let json = response.data;
+                if(json.success === false) {
+                    this.$message({
+                        message : json.message,
+                        type : 'error',
+                        center : true
+                    });
+                }else {
+                    // 绑定手机号 需要userId
+                }
+            })
+            .catch (response => {
+                this.$message({
+                    message : '连接服务器失败',
+                    type : 'error',
+                    center : true
+                });
+            });
+      }
+  }
+};
+</script>

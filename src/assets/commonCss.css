@@ -1,0 +1,26 @@
+a {
+    text-decoration-line: none;
+    /* color:#0066FF;  */
+    color:#0066FF;
+}
+.input {
+    margin-top: 10px;
+}
+.button {
+    width: 100%;
+    margin-top: 20px;
+}
+.check {
+    margin-top: 10px;
+}
+.agreementFont {
+    color: red;
+}
+.footLeft {
+    font-size: 14px;
+    float: left;
+}
+.footRight {
+    font-size: 14px;
+    float: right;
+}
