@@ -11,7 +11,7 @@
             </el-input>
             <el-row :gutter="20">
                 <el-col :span="12">
-                    <el-button class="button" type="danger" round>稍后再说</el-button>
+                    <el-button class="button" type="danger" @click="login()" round>稍后再说</el-button>
                 </el-col>
                 <el-col :span="12">
                     <el-button class="button" type="primary" @click="bindPhone()" round>绑定手机号</el-button>
@@ -19,27 +19,37 @@
             </el-row>
         </el-main>
         <el-footer></el-footer>
+        <logining-dialog :dialogVisible= 'dialogVisible' :account= 'account' @dialogData= "closeDialog"></logining-dialog>
     </el-container>
 </template>
 
 <script>
 import LoginHeader from "./LoginHeader.vue";
+import LoginingDialog from './LoginingDialog.vue';
 const TIME_COUNT = 60;
 
 export default {
   name: "BindPhone",
   data: function() {
     return {
+      userId : "",
+      account: "",
       phone: "",
       codeValue: "",
       headerContent: "绑定手机号",
       timer : null,
       count : '',
-      show : true
+      show : true,
+      dialogVisible : false
     };
   },
+  mounted : function () {
+      this.userId = this.$route.params.userId;
+      this.account = this.$route.params.account;
+  },
   components: {
-    "login-header": LoginHeader
+    "login-header": LoginHeader,
+    'logining-dialog' : LoginingDialog
   },
   methods : {
       getCodeValue:function () {
@@ -152,7 +162,18 @@ export default {
                     center : true
                 });
             });
-      }
+      },
+      login : function () {
+          this.dialogVisible = true;
+      },
+        closeDialog : function (data) {
+            this.dialogVisible = data;
+            this.$message({
+                message : '登录成功',
+                type : 'success',
+                center : true
+            });
+        }
   }
 };
 </script>

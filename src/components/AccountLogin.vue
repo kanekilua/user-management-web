@@ -13,11 +13,14 @@
             <router-link class="footLeft " to= "PhoneLogin">切换登陆方式></router-link>
             <router-link class="footRight " to= "Register">立即注册></router-link>
         </el-footer>
+        <logining-dialog :dialogVisible= 'dialogVisible' :account= 'account' @dialogData= "closeDialog"></logining-dialog>
     </el-container>
 </template>
 
 <script>
     import LoginHeader from './LoginHeader.vue';
+    import LoginingDialog from './LoginingDialog.vue';
+
     export default {
         name : 'AccountLogin',
         data : function (){
@@ -26,14 +29,16 @@
                 password : '',
                 getFromStorage : false,
                 checked : true,
-                headerContent : '账号登录'
+                headerContent : '账号登录',
+                dialogVisible : false
             };
         },
         mounted : function () {
             this.changeInput();
         },
         components : {
-            'login-header' : LoginHeader
+            'login-header' : LoginHeader,
+            'logining-dialog' : LoginingDialog
         },
         methods: {
             accountLogin : function () {
@@ -103,11 +108,7 @@
                                 center : true
                             });
                         }else {
-                            this.$message({
-                                message : '登录成功',
-                                type : 'success',
-                                center : true
-                            });
+                            this.dialogVisible = true;
                             let user = json.data.user;
                             if(localStorage.hasOwnProperty('monster-user')) {
                                 let users = JSON.parse(localStorage.getItem('monster-user'));
@@ -144,6 +145,14 @@
             },
             changeGetWay : function () {
                 this.getFromStorage = false;
+            },
+            closeDialog : function (data) {
+                this.dialogVisible = data;
+                this.$message({
+                    message : '登录成功',
+                    type : 'success',
+                    center : true
+                });
             }
         }
     }

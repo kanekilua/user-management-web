@@ -125,12 +125,7 @@
                                 type : 'error',
                                 center : true
                             });
-                        }else { 
-                            this.$message({
-                                message : '登录成功',
-                                type : 'success',
-                                center : true
-                            });
+                        }else {
                             let user = json.data.user;
                             if(localStorage.hasOwnProperty('monster-user')) {
                                 let users = JSON.parse(localStorage.getItem('monster-user'));
@@ -147,7 +142,13 @@
                                 localStorage.setItem('monster-user',JSON.stringify(users));
                             }
                             if(json.data.user.phone === null || json.data.user.phone === "") {
-                                this.$router.push({ path: 'BindPhone' });
+                                this.$router.push({ 
+                                    name: 'BindPhone',
+                                    params : {
+                                        userId : json.data.user.userId,
+                                        account : this.account
+                                    }
+                                });
                             }
                         }
                     })

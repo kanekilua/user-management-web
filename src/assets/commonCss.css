@@ -24,3 +24,9 @@ a {
     font-size: 14px;
     float: right;
 }
+.el-dialog__body {
+    padding : 10px;
+}
+.el-dialog__header {
+    padding : 0px;
+}
