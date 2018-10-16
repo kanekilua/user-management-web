@@ -159,11 +159,6 @@
             },
             closeDialog : function (data) {
                 this.dialogVisible = data;
-                this.$message({
-                    message : '登录成功',
-                    type : 'success',
-                    center : true
-                });
             }
         }
     }
