@@ -3,7 +3,7 @@
             <p v-if="phone != null && phone != ''">{{phone}}</p>
             <p v-else>{{account}}</p>
             <p>正在登录<i class="el-icon-loading"></i></p>
-            <el-button size="mini" @click="">切换账号</el-button>
+            <el-button size="mini" @click="changeAccount()">切换账号</el-button>
     </el-dialog>
 </template>
 <script>
@@ -31,6 +31,11 @@
                 setTimeout(() => {
                     this.updateData();
                 },3000);
+            },
+            changeAccount : function () {
+                this.$router.push({ 
+                    name: 'AccountLogin'
+                });
             }
         }
     }

@@ -1,3 +1,4 @@
+* {padding:0;margin:0}
 a {
     text-decoration-line: none;
     /* color:#0066FF;  */
@@ -29,4 +30,7 @@ a {
 }
 .el-dialog__header {
     padding : 0px;
+}
+.el-container {
+    margin-top: 60px;
 }
