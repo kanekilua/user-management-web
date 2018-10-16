@@ -141,11 +141,11 @@
                                 users.push(user);
                                 localStorage.setItem('monster-user',JSON.stringify(users));
                             }
-                            if(json.data.user.phone === null || json.data.user.phone === "") {
+                            if(user.phone === null || user.phone === "") {
                                 this.$router.push({ 
                                     name: 'BindPhone',
                                     params : {
-                                        userId : json.data.user.userId,
+                                        userId : user.userId,
                                         account : this.account
                                     }
                                 });

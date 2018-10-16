@@ -23,11 +23,13 @@
             <router-link class="footLeft " to= "AccountLogin">账号密码登录></router-link>
             <router-link class="footRight " to= "Register">立即注册></router-link>
         </el-footer>
+        <logining-dialog :dialogVisible= 'dialogVisible' :phone = 'phone' @dialogData= "closeDialog"></logining-dialog>
     </el-container>
 </template>
 
 <script>
 import LoginHeader from "./LoginHeader.vue";
+import LoginingDialog from './LoginingDialog.vue';
 const TIME_COUNT = 60;
 
 export default {
@@ -40,11 +42,13 @@ export default {
       headerContent: "手机号登录",
       timer : null,
       count : '',
-      show : true
+      show : true,
+      dialogVisible : false
     };
   },
   components: {
-    "login-header": LoginHeader
+    "login-header": LoginHeader,
+    'logining-dialog' : LoginingDialog
   },
   methods : {
       getCodeValue:function () {
@@ -169,11 +173,7 @@ export default {
                                     center : true
                                 });
                             }else {
-                                this.$message({
-                                    message : '登录成功',
-                                    type : 'success',
-                                    center : true
-                                });
+                                this.dialogVisible = true;
                                 let user = json.data.user;
                                 if(localStorage.hasOwnProperty('monster-user')) {
                                     let users = JSON.parse(localStorage.getItem('monster-user'));
@@ -207,7 +207,15 @@ export default {
                     center : true
                 });
             });
-      }
+      },
+        closeDialog : function (data) {
+            this.dialogVisible = data;
+            this.$message({
+                message : '登录成功',
+                type : 'success',
+                center : true
+            });
+        }
   }
 };
 </script>

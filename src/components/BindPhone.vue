@@ -19,7 +19,7 @@
             </el-row>
         </el-main>
         <el-footer></el-footer>
-        <logining-dialog :dialogVisible= 'dialogVisible' :account= 'account' @dialogData= "closeDialog"></logining-dialog>
+        <logining-dialog :dialogVisible= 'dialogVisible' :account= 'account' :phone= 'phone' @dialogData= "closeDialog"></logining-dialog>
     </el-container>
 </template>
 
@@ -153,6 +153,32 @@ export default {
                     });
                 }else {
                     // 绑定手机号 需要userId
+                    let bindData = {
+                        userId : this.userId,
+                        phone : this.phone
+                    };
+                    this.$http
+                        .put ('/user?type=userId',bindData)
+                        .then (response => {
+                            let json = response.data;
+                            if(json.success === false) {
+                                this.$message({
+                                    message : json.message,
+                                    type : 'error',
+                                    center : true
+                                });
+                            }else {
+                                this.phone = json.data.user.phone;
+                                this.login();
+                            }
+                        })
+                        .catch (response => {
+                            this.$message({
+                                message : '连接服务器失败',
+                                type : 'error',
+                                center : true
+                            });
+                        });
                 }
             })
             .catch (response => {

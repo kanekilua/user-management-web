@@ -22,7 +22,10 @@
         },
         methods :{
             updateData () {
-                this.$emit('dialogData', false); //这句不知道什么意思鸭
+                this.$emit('dialogData', false);
+                this.$router.push({ 
+                    name: 'AccountLogin'
+                });
             },
             openDialog : function () {
                 setTimeout(() => {

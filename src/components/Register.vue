@@ -18,10 +18,12 @@
             <router-link class="footLeft " to= "PhoneLogin"><返回登录</router-link>
             <el-checkbox class="footRight" v-model="checked">阅读并同意<router-link class="agreementFont" to = 'UserAgreement'> 《用户协议》</router-link></el-checkbox>
         </el-footer>
+        <logining-dialog :dialogVisible= 'dialogVisible' :phone = 'phone' @dialogData= "closeDialog"></logining-dialog>
     </el-container>
 </template>
 <script>
 import LoginHeader from "./LoginHeader.vue";
+import LoginingDialog from './LoginingDialog.vue';
 
 const TIME_COUNT = 60;
 
@@ -39,11 +41,13 @@ export default {
             show : true,
             pwdVisitble : false,
             pwdInputType : 'password',
-            pwdInputIcon : 'el-icon-ali-browse_fill'
+            pwdInputIcon : 'el-icon-ali-browse_fill',
+            dialogVisible : false
         }
     },
     components : {
-        'login-header' : LoginHeader 
+        'login-header' : LoginHeader,
+        'logining-dialog' : LoginingDialog
     },
     methods : {
         getCodeValue:function () {
@@ -189,11 +193,7 @@ export default {
                                         center : true
                                     });
                                 }else {
-                                    this.$message({
-                                        message : '登录成功',
-                                        type : 'success',
-                                        center : true
-                                    });
+                                    this.dialogVisible = true;
                                     let user = json.data.user;
                                     if(localStorage.hasOwnProperty('monster-user')) {
                                         let users = JSON.parse(localStorage.getItem('monster-user'));
@@ -227,6 +227,14 @@ export default {
                         center : true
                     });
                 });
+        },
+        closeDialog : function (data) {
+            this.dialogVisible = data;
+            this.$message({
+                message : '登录成功',
+                type : 'success',
+                center : true
+            });
         }
     }
 }

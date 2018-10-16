@@ -13,7 +13,7 @@
             <router-link class="footLeft " to= "PhoneLogin">切换登陆方式></router-link>
             <router-link class="footRight " to= "Register">立即注册></router-link>
         </el-footer>
-        <logining-dialog :dialogVisible= 'dialogVisible' :account= 'account' @dialogData= "closeDialog"></logining-dialog>
+        <logining-dialog :dialogVisible= 'dialogVisible' :account= 'account' :phone = 'phone' @dialogData= "closeDialog"></logining-dialog>
     </el-container>
 </template>
 
@@ -26,6 +26,7 @@
         data : function (){
             return {
                 account : '',
+                phone : '',
                 password : '',
                 getFromStorage : false,
                 checked : true,
@@ -108,7 +109,6 @@
                                 center : true
                             });
                         }else {
-                            this.dialogVisible = true;
                             let user = json.data.user;
                             if(localStorage.hasOwnProperty('monster-user')) {
                                 let users = JSON.parse(localStorage.getItem('monster-user'));
@@ -123,6 +123,17 @@
                                 let users = [];
                                 users.push(user);
                                 localStorage.setItem('monster-user',JSON.stringify(users));
+                            }
+                            if(user.phone === null || user.phone === "") {
+                                this.$router.push({ 
+                                    name: 'BindPhone',
+                                    params : {
+                                        userId : user.userId,
+                                        account : this.account
+                                    }
+                                });
+                            }else {
+                                this.dialogVisible = true;
                             }
                         }
                     })
