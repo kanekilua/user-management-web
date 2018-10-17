@@ -2,7 +2,9 @@
     <el-container>
         <login-header :headerContent = 'headerContent'></login-header>
         <el-main>
-            <el-input class="input" placeholder="账号" prefix-icon="el-icon-ali-people" @change="changeGetWay()" v-model="account"></el-input>
+            <el-input class="input" placeholder="账号" prefix-icon="el-icon-ali-people" @change="changeGetWay()" v-model="account">
+                <i :class="inputSuffixIcon" slot="suffix" @click="showDropdown()"></i>
+            </el-input>
             <el-input class="input" type="password" placeholder="密码" prefix-icon="el-icon-ali-lock" @change="changeGetWay()" v-model="password">
                 <router-link to="ResetPwd" slot="append" style="color:grey">忘记密码</router-link>
             </el-input>
@@ -10,16 +12,18 @@
             <el-checkbox class="check" v-model="checked">阅读并同意<router-link to = 'UserAgreement' class="agreementFont"> 《用户协议》</router-link></el-checkbox>
         </el-main>
         <el-footer>
-            <router-link class="footLeft " to= "PhoneLogin">切换登陆方式></router-link>
-            <router-link class="footRight " to= "Register">立即注册></router-link>
+            <router-link class="footLeft" to= "PhoneLogin">切换登陆方式></router-link>
+            <router-link class="footRight" to= "Register">立即注册></router-link>
         </el-footer>
         <logining-dialog :dialogVisible= 'dialogVisible' :account= 'account' :phone = 'phone' @dialogData= "closeDialog"></logining-dialog>
+        <dropdown-dialog :dropdownVisible= 'dropdownVisible' @deleteUser= "deleteUser"  @dialogData= "closeDropdown" @changInput= "changInput" :users= 'users' :account= "account"></dropdown-dialog>
     </el-container>
 </template>
 
 <script>
     import LoginHeader from './LoginHeader.vue';
     import LoginingDialog from './LoginingDialog.vue';
+    import DropdownDialog from './DropdownDialog.vue';
 
     export default {
         name : 'AccountLogin',
@@ -28,18 +32,32 @@
                 account : '',
                 phone : '',
                 password : '',
+                userId : 0,
                 getFromStorage : false,
                 checked : true,
                 headerContent : '账号登录',
-                dialogVisible : false
+                dialogVisible : false,
+                dropdownVisible : false,
+                inputSuffixIcon : '',
+                users : []
             };
         },
+        watch : {
+            users (val) {
+                if(val.length > 1) {
+                    this.inputSuffixIcon = 'el-icon-ali-unfold el-input__icon';
+                }else {
+                    this.inputSuffixIcon = '';
+                }
+            }
+        }, 
         mounted : function () {
-            this.changeInput();
+            this.getUsers();
         },
         components : {
             'login-header' : LoginHeader,
-            'logining-dialog' : LoginingDialog
+            'logining-dialog' : LoginingDialog,
+            'dropdown-dialog' : DropdownDialog
         },
         methods: {
             accountLogin : function () {
@@ -85,10 +103,15 @@
                 }
                 let accountData ;
                 if(this.getFromStorage) {
-                    let users = JSON.parse(localStorage.getItem('monster-user'));
+                    let realPwd = '';
+                    for(let i =0 ; i < this.users.length; ++i) {
+                        if(this.account === this.users[i].phone || this.account === this.users[i].account) {
+                            realPwd = this.users[i].password;
+                        }
+                    }
                     accountData = {
                         account : this.account,
-                        password : users[users.length - 1].password
+                        password : realPwd
                     };
                 }else {
                     let hashPwd = this.$md5(this.password);
@@ -116,6 +139,9 @@
                                     if(user.userId === users[i].userId) {
                                         users.splice(i,1);
                                     }
+                                }
+                                if(users.length === 7) {
+                                    users.splice(0,1);
                                 }
                                 users.push(user);
                                 localStorage.setItem('monster-user',JSON.stringify(users));
@@ -145,20 +171,40 @@
                         });
                     });
             },
-            changeInput : function () {
-                let users = JSON.parse(localStorage.getItem('monster-user'));
-                if(users != null && users.length > 0) {
-                    let lastUser = users[users.length-1];
-                    this.account = lastUser.phone  === "" ? lastUser.account : lastUser.phone;
-                    this.password = lastUser.password.slice(1,7);
-                    this.getFromStorage = true;
-                }
+            getUsers : function () {
+                this.users = JSON.parse(localStorage.getItem('monster-user'));
+                this.changInput(this.users[this.users.length-1]);
+                this.getFromStorage = true;
             },
             changeGetWay : function () {
                 this.getFromStorage = false;
             },
             closeDialog : function (data) {
                 this.dialogVisible = data;
+            },
+            closeDropdown : function (data) {
+                if(this.users.length > 1) {
+                    this.inputSuffixIcon = 'el-icon-ali-unfold el-input__icon';
+                }else{
+                    this.inputSuffixIcon = '';
+                }
+                this.dropdownVisible = data;
+            },
+            showDropdown : function () {
+                this.inputSuffixIcon = 'el-icon-ali-packup el-input__icon';
+                this.dropdownVisible = !this.dropdownVisible;
+            },
+            changInput : function (user) {
+                this.account = user.account;
+                this.password = user.password.slice(1,7);
+            },
+            deleteUser : function (userId) {
+                for(let i=0;i<this.users.length; ++i) {
+                    if(this.users[i].userId === userId) {
+                        this.users.splice(i,1);
+                    }
+                }
+                localStorage.setItem('monster-user',JSON.stringify(this.users));
             }
         }
     }

@@ -202,6 +202,9 @@ export default {
                                                 users.splice(i,1);
                                             }
                                         }
+                                        if(users.length === 7) {
+                                            users.splice(0,1);
+                                        }
                                         users.push(user);
                                         localStorage.setItem('monster-user',JSON.stringify(users));
                                     }else {
