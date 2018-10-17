@@ -71,7 +71,7 @@
                     });
                     return false;
                 }
-                if(this.account === null || this.account === "") {
+                if(this.account === undefined || this.account === "") {
                     this.$message({
                         message : '账号不能为空',
                         type : 'error',
@@ -87,7 +87,7 @@
                     });
                     return false;
                 }
-                if (this.password === null || this.password === "") {
+                if (this.password === undefined || this.password === "") {
                     this.$message({
                         message : '密码不能为空',
                         type : 'error',
@@ -144,7 +144,7 @@
                                 users.push(user);
                                 localStorage.setItem('monster-user',JSON.stringify(users));
                             }
-                            if(user.phone === null || user.phone === "") {
+                            if(user.phone === undefined || user.phone === "") {
                                 this.$router.push({ 
                                     name: 'BindPhone',
                                     params : {

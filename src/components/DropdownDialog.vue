@@ -53,10 +53,14 @@
             changeGridData : function (users) {
                 this.gridData = [];
                 for(let i = 0;i< users.length; ++i) {
-                    if(users[i].phone != null && users[i].phone != '' && users[i].phone != this.account) {
-                        this.gridData.push({'userId' : users[i].userId ,'account':users[i].phone ,'password' :users[i].password });
-                    }else if(users[i].account != this.account) {
-                        this.gridData.push({'userId' : users[i].userId ,'account':users[i].account ,'password' :users[i].password});
+                    if(users[i].phone != undefined && users[i].phone != '' ) {
+                        if(users[i].phone != this.account) {
+                            this.gridData.push({'userId' : users[i].userId ,'account':users[i].phone ,'password' :users[i].password });
+                        }
+                    }else {
+                        if(users[i].account != this.account) {
+                            this.gridData.push({'userId' : users[i].userId ,'account':users[i].account ,'password' :users[i].password});
+                        }
                     }
                 }
             }

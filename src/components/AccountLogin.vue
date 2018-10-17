@@ -69,7 +69,7 @@
                     });
                     return false;
                 }
-                if(this.account === null || this.account === "") {
+                if(this.account === undefined || this.account === "") {
                     this.$message({
                         message : '账号不能为空',
                         type : 'error',
@@ -85,7 +85,7 @@
                     });
                     return false;
                 }
-                if(this.password === null || this.password === "") {
+                if(this.password === undefined || this.password === "") {
                     this.$message({
                         message : '密码不能为空',
                         type : 'error',
@@ -150,7 +150,7 @@
                                 users.push(user);
                                 localStorage.setItem('monster-user',JSON.stringify(users));
                             }
-                            if(user.phone === null || user.phone === "") {
+                            if(user.phone === undefined || user.phone === "") {
                                 this.$router.push({ 
                                     name: 'BindPhone',
                                     params : {
@@ -189,13 +189,14 @@
                     this.inputSuffixIcon = '';
                 }
                 this.dropdownVisible = data;
+                this.getFromStorage = true;
             },
             showDropdown : function () {
                 this.inputSuffixIcon = 'el-icon-ali-packup el-input__icon';
                 this.dropdownVisible = !this.dropdownVisible;
             },
             changInput : function (user) {
-                this.account = user.account;
+                this.account = (user.phone === undefined || user.phone === '') ? user.account : user.phone;
                 this.password = user.password.slice(1,7);
             },
             deleteUser : function (userId) {

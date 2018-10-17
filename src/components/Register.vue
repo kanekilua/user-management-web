@@ -51,7 +51,7 @@ export default {
     },
     methods : {
         getCodeValue:function () {
-            if(this.phone === "" || this.phone === null) {
+            if(this.phone === "" || this.phone === undefined) {
                 this.$message({
                     message : '手机号码不能为空',
                     type : 'error',
@@ -122,7 +122,7 @@ export default {
             
         },
         registerLogin : function () {
-            if(this.phone === "" || this.phone === null) {
+            if(this.phone === "" || this.phone === undefined) {
                 this.$message({
                     message : '手机号码不能为空',
                     type : 'error',
@@ -138,7 +138,7 @@ export default {
                 });
                 return false;
             }
-            if(this.codeValue === null || this.codeValue === "") {
+            if(this.codeValue === undefined || this.codeValue === "") {
                 this.$message({
                     message : '验证码不能为空',
                     type : 'error',
@@ -146,7 +146,7 @@ export default {
                 });
                 return false;
             }
-            if (this.password === null || this.password === "") {
+            if (this.password === undefined || this.password === "") {
                 this.$message({
                     message : '密码不能为空',
                     type : 'error',

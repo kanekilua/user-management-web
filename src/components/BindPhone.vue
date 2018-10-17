@@ -37,7 +37,7 @@ export default {
       phone: "",
       codeValue: "",
       headerContent: "绑定手机号",
-      timer : null,
+      timer : undefined,
       count : '',
       show : true,
       dialogVisible : false
@@ -53,7 +53,7 @@ export default {
   },
   methods : {
       getCodeValue:function () {
-        if(this.phone === "" || this.phone === null) {
+        if(this.phone === "" || this.phone === undefined) {
             this.$message({
                 message : '手机号码不能为空',
                 type : 'error',
@@ -113,7 +113,7 @@ export default {
             });
       },
       bindPhone : function () {
-        if(this.phone === null || this.phone === "") {
+        if(this.phone === undefined || this.phone === "") {
             this.$message({
                 message : '手机号码不能为空',
                 type : 'error',
@@ -129,7 +129,7 @@ export default {
             });
             return false;
         }
-        if(this.codeValue === null || this.codeValue === "") {
+        if(this.codeValue === undefined || this.codeValue === "") {
             this.$message({
                 message : '验证码不能为空',
                 type : 'error',
