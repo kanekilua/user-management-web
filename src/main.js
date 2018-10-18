@@ -6,6 +6,7 @@ import router from './router'
 import ElementUI from '../node_modules/element-ui';
 import axios from 'axios'
 import md5 from 'js-md5'
+import store from './store/store.js'
 
 import '../node_modules/element-ui/lib/theme-chalk/index.css'
 import './assets/commonCss.css'
@@ -23,6 +24,7 @@ Vue.prototype.$md5 = md5;
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })

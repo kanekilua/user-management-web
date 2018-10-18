@@ -15,8 +15,8 @@
             <router-link class="footLeft" to= "PhoneLogin">切换登陆方式></router-link>
             <router-link class="footRight" to= "Register">立即注册></router-link>
         </el-footer>
-        <logining-dialog :dialogVisible= 'dialogVisible' :account= 'account' :phone = 'phone' @dialogData= "closeDialog"></logining-dialog>
-        <dropdown-dialog :dropdownVisible= 'dropdownVisible' @deleteUser= "deleteUser"  @dialogData= "closeDropdown" @changInput= "changInput" :users= 'users' :account= "account"></dropdown-dialog>
+        <logining-dialog :phone = 'phone'></logining-dialog>
+        <dropdown-dialog @deleteUser= "deleteUser" @changInput= "changInput" :users= 'users'></dropdown-dialog>
     </el-container>
 </template>
 
@@ -29,17 +29,9 @@
         name : 'AccountLogin',
         data : function (){
             return {
-                account : '',
-                phone : '',
-                password : '',
-                userId : 0,
                 getFromStorage : false,
                 checked : true,
-                headerContent : '账号登录',
-                dialogVisible : false,
-                dropdownVisible : false,
-                inputSuffixIcon : '',
-                users : []
+                headerContent : '账号登录'
             };
         },
         watch : {
@@ -64,22 +56,6 @@
                 if (this.checked === false) {
                     this.$message({
                         message : '请同意用户协议',
-                        type : 'error',
-                        center : true
-                    });
-                    return false;
-                }
-                if(this.account === undefined || this.account === "") {
-                    this.$message({
-                        message : '账号不能为空',
-                        type : 'error',
-                        center : true
-                    });
-                    return false;
-                }
-                if(!(/^[a-zA-Z0-9]{6,12}$/.test( this.account ))) {
-                    this.$message({
-                        message : '账号格式错误，请重填',
                         type : 'error',
                         center : true
                     });
@@ -159,7 +135,7 @@
                                     }
                                 });
                             }else {
-                                this.dialogVisible = true;
+                                this.$store.state.loggingDialog.show = true;
                             }
                         }
                     })
@@ -179,21 +155,18 @@
             changeGetWay : function () {
                 this.getFromStorage = false;
             },
-            closeDialog : function (data) {
-                this.dialogVisible = data;
-            },
             closeDropdown : function (data) {
                 if(this.users.length > 1) {
                     this.inputSuffixIcon = 'el-icon-ali-unfold el-input__icon';
                 }else{
                     this.inputSuffixIcon = '';
                 }
-                this.dropdownVisible = data;
+                this.$store.state.dropdownDialog.show = data;
                 this.getFromStorage = true;
             },
             showDropdown : function () {
                 this.inputSuffixIcon = 'el-icon-ali-packup el-input__icon';
-                this.dropdownVisible = !this.dropdownVisible;
+                this.$store.state.dropdownDialog.show = !this.$store.state.dropdownDialog.show;
             },
             changInput : function (user) {
                 this.account = (user.phone === undefined || user.phone === '') ? user.account : user.phone;

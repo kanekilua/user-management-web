@@ -23,7 +23,7 @@
             <router-link class="footLeft " to= "AccountLogin">账号密码登录></router-link>
             <router-link class="footRight " to= "Register">立即注册></router-link>
         </el-footer>
-        <logining-dialog :dialogVisible= 'dialogVisible' :phone = 'phone' @dialogData= "closeDialog"></logining-dialog>
+        <logining-dialog :phone = 'phone' ></logining-dialog>
     </el-container>
 </template>
 
@@ -42,8 +42,7 @@ export default {
       headerContent: "手机号登录",
       timer : undefined,
       count : '',
-      show : true,
-      dialogVisible : false
+      show : true
     };
   },
   components: {
@@ -173,7 +172,7 @@ export default {
                                     center : true
                                 });
                             }else {
-                                this.dialogVisible = true;
+                                this.$store.state.loggingDialog.show = true;
                                 let user = json.data.user;
                                 if(localStorage.hasOwnProperty('monster-user')) {
                                     let users = JSON.parse(localStorage.getItem('monster-user'));
@@ -210,10 +209,7 @@ export default {
                     center : true
                 });
             });
-      },
-        closeDialog : function (data) {
-            this.dialogVisible = data;
-        }
+      }
   }
 };
 </script>

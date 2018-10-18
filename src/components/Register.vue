@@ -18,7 +18,7 @@
             <router-link class="footLeft " to= "PhoneLogin"><返回登录</router-link>
             <el-checkbox class="footRight" v-model="checked">阅读并同意<router-link class="agreementFont" to = 'UserAgreement'> 《用户协议》</router-link></el-checkbox>
         </el-footer>
-        <logining-dialog :dialogVisible= 'dialogVisible' :phone = 'phone' @dialogData= "closeDialog"></logining-dialog>
+        <logining-dialog :phone = 'phone'></logining-dialog>
     </el-container>
 </template>
 <script>
@@ -41,8 +41,7 @@ export default {
             show : true,
             pwdVisitble : false,
             pwdInputType : 'password',
-            pwdInputIcon : 'el-icon-ali-browse_fill',
-            dialogVisible : false
+            pwdInputIcon : 'el-icon-ali-browse_fill'
         }
     },
     components : {
@@ -193,7 +192,7 @@ export default {
                                         center : true
                                     });
                                 }else {
-                                    this.dialogVisible = true;
+                                    this.$store.state.loggingDialog.show = true;
                                     let user = json.data.user;
                                     if(localStorage.hasOwnProperty('monster-user')) {
                                         let users = JSON.parse(localStorage.getItem('monster-user'));
@@ -230,9 +229,6 @@ export default {
                         center : true
                     });
                 });
-        },
-        closeDialog : function (data) {
-            this.dialogVisible = data;
         }
     }
 }

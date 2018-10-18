@@ -1,5 +1,5 @@
 <template>
-    <el-dialog  :visible.sync="visible" width="90%" :show-close=false :close-on-press-escape=false :close-on-click-modal=false @close = 'closeDialog() ' @open= 'openDialog()'>   
+    <el-dialog  :visible="this.$store.state.loggingDialog.show" width="90%" :show-close=false :close-on-press-escape=false :close-on-click-modal=false @close = 'closeDialog() ' @open= 'openDialog()'>   
             <p v-if="phone != null && phone != ''">{{phone}}</p>
             <p v-else>{{account}}</p>
             <p>正在登录<i class="el-icon-loading"></i></p>
@@ -9,21 +9,15 @@
 <script>
     export default {
         name : "Logining",
-        props : ['dialogVisible','account','phone'],
+        props : ['account','phone'],
         data () {
             return {
-                visible: this.dialogVisible,
                 timer : 0
-            }
-        },
-        watch: {
-            dialogVisible (val) {
-                this.visible = val;
             }
         },
         methods :{
             closeDialog () {
-                this.$emit('dialogData', false);
+                this.$store.state.loggingDialog.show = false;
                 this.$router.push({ 
                     name: 'AccountLogin'
                 });

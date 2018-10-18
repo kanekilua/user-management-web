@@ -19,7 +19,7 @@
             </el-row>
         </el-main>
         <el-footer></el-footer>
-        <logining-dialog :dialogVisible= 'dialogVisible' :account= 'account' :phone= 'phone' @dialogData= "closeDialog"></logining-dialog>
+        <logining-dialog :account= 'account' :phone= 'phone'></logining-dialog>
     </el-container>
 </template>
 
@@ -39,8 +39,7 @@ export default {
       headerContent: "绑定手机号",
       timer : undefined,
       count : '',
-      show : true,
-      dialogVisible : false
+      show : true
     };
   },
   mounted : function () {
@@ -190,11 +189,8 @@ export default {
             });
       },
       login : function () {
-          this.dialogVisible = true;
-      },
-        closeDialog : function (data) {
-            this.dialogVisible = data;
-        }
+          this.$store.state.loggingDialog.show = true;
+      }
   }
 };
 </script>

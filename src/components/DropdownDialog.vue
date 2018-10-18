@@ -1,6 +1,6 @@
 <template>
     <div class="market_out">
-        <el-dialog  :visible.sync="visible" width="calc(100% - 42px)" top="190px"
+        <el-dialog  :visible="this.$store.state.dropdownDialog.show" width="calc(100% - 42px)" top="190px"
                     :show-close=false
                     :modal= false
                     @close= 'closeDialog()'>   
@@ -18,17 +18,13 @@
 <script>
     export default {
         name : "DropdownDialog",
-        props : ['dropdownVisible','users','account'],
+        props : ['users','account'],
         data () {
             return {
-                visible : this.dropdownVisible,
                 gridData: []
             }
         },
         watch: {
-            dropdownVisible (val) {
-                this.visible = val;
-            },
             users (val) {
                 this.users = val;
                 this.changeGridData (val);
@@ -40,7 +36,7 @@
         },
         methods :{
             closeDialog : function () {
-                this.$emit('dialogData', false);
+                this.$store.state.dropdownDialog.show = false;
             },
             clickItem : function (row, column, cell, event) {
                 if(column.fixed === 'right') {
@@ -48,7 +44,7 @@
                 }else{
                     this.$emit('changInput',row);
                 }
-                this.$emit('dialogData',false);
+                this.$store.state.dropdownDialog.show = false;
             },
             changeGridData : function (users) {
                 this.gridData = [];
