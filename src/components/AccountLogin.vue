@@ -2,7 +2,7 @@
     <el-container>
         <login-header :headerContent = 'headerContent'></login-header>
         <el-main>
-            <el-input class="input" placeholder="账号" prefix-icon="el-icon-ali-people" @change="changeGetWay()" v-model="account">
+            <el-input class="input" placeholder="账号" prefix-icon="el-icon-ali-people" @change="changeGetWay()" v-model="this.$store.state.accountLogin.account">
                 <i :class="inputSuffixIcon" slot="suffix" @click="showDropdown()"></i>
             </el-input>
             <el-input class="input" type="password" placeholder="密码" prefix-icon="el-icon-ali-lock" @change="changeGetWay()" v-model="password">
@@ -15,7 +15,7 @@
             <router-link class="footLeft" to= "PhoneLogin">切换登陆方式></router-link>
             <router-link class="footRight" to= "Register">立即注册></router-link>
         </el-footer>
-        <logining-dialog :phone = 'phone'></logining-dialog>
+        <logining-dialog ></logining-dialog>
         <dropdown-dialog @deleteUser= "deleteUser" @changInput= "changInput" :users= 'users'></dropdown-dialog>
     </el-container>
 </template>
@@ -81,18 +81,18 @@
                 if(this.getFromStorage) {
                     let realPwd = '';
                     for(let i =0 ; i < this.users.length; ++i) {
-                        if(this.account === this.users[i].phone || this.account === this.users[i].account) {
+                        if(this.$store.state.accountLogin.account === this.users[i].phone || this.$store.state.accountLogin.account === this.users[i].account) {
                             realPwd = this.users[i].password;
                         }
                     }
                     accountData = {
-                        account : this.account,
+                        account : this.$store.state.accountLogin.account,
                         password : realPwd
                     };
                 }else {
                     let hashPwd = this.$md5(this.password);
                     accountData = {
-                        account : this.account,
+                        account : this.$store.state.accountLogin.account,
                         password : hashPwd
                     };
                 }
@@ -131,7 +131,7 @@
                                     name: 'BindPhone',
                                     params : {
                                         userId : user.userId,
-                                        account : this.account
+                                        account : this.$store.state.accountLogin.account
                                     }
                                 });
                             }else {
@@ -169,7 +169,7 @@
                 this.$store.state.dropdownDialog.show = !this.$store.state.dropdownDialog.show;
             },
             changInput : function (user) {
-                this.account = (user.phone === undefined || user.phone === '') ? user.account : user.phone;
+                this.$store.state.accountLogin.account = (user.phone === undefined || user.phone === '') ? user.account : user.phone;
                 this.password = user.password.slice(1,7);
             },
             deleteUser : function (userId) {
