@@ -2,46 +2,51 @@
     <el-container>
         <login-header :headerContent = 'headerContent'></login-header>
         <el-main>
-            <el-input class="input" placeholder="账号" prefix-icon="el-icon-ali-people" @change="changeGetWay()" v-model="this.$store.state.accountLogin.account">
-                <i :class="inputSuffixIcon" slot="suffix" @click="showDropdown()"></i>
+            <el-input class="input" placeholder="账号" prefix-icon="el-icon-ali-people" @change="changeGetWay" :value="account" @input="changeAccount">
+                <i :class="inputSuffixIcon" slot="suffix" @click="switchDropdown"></i>
             </el-input>
-            <el-input class="input" type="password" placeholder="密码" prefix-icon="el-icon-ali-lock" @change="changeGetWay()" v-model="password">
+            <el-input class="input" type="password" placeholder="密码" prefix-icon="el-icon-ali-lock" @change="changeGetWay" :value="password" @input="changePassword">
                 <router-link to="ResetPwd" slot="append" style="color:grey">忘记密码</router-link>
             </el-input>
-            <el-button class="button" type="primary" @click="accountLogin()" round>登录</el-button>
-            <el-checkbox class="check" v-model="checked">阅读并同意<router-link to = 'UserAgreement' class="agreementFont"> 《用户协议》</router-link></el-checkbox>
+            <el-button class="button" type="primary" @click="accountLogin" round>登录</el-button>
+            <el-checkbox class="check" @change="switchUserAgreement" :value="userAgreement">阅读并同意<router-link to = 'UserAgreement' class="agreementFont"> 《用户协议》</router-link></el-checkbox>
         </el-main>
         <el-footer>
             <router-link class="footLeft" to= "PhoneLogin">切换登陆方式></router-link>
             <router-link class="footRight" to= "Register">立即注册></router-link>
         </el-footer>
         <logining-dialog ></logining-dialog>
-        <dropdown-dialog @deleteUser= "deleteUser" @changInput= "changInput" :users= 'users'></dropdown-dialog>
+        <dropdown-dialog @deleteUser= "deleteUser" @changeInput= "changeInput"></dropdown-dialog>
     </el-container>
 </template>
 
 <script>
+    import {mapState, mapGetters, mapMutations } from 'vuex';
+
     import LoginHeader from './LoginHeader.vue';
     import LoginingDialog from './LoginingDialog.vue';
     import DropdownDialog from './DropdownDialog.vue';
-
+    
     export default {
         name : 'AccountLogin',
         data : function (){
             return {
                 getFromStorage : false,
-                checked : true,
                 headerContent : '账号登录'
             };
         },
-        watch : {
-            users (val) {
-                if(val.length > 1) {
-                    this.inputSuffixIcon = 'el-icon-ali-unfold el-input__icon';
-                }else {
-                    this.inputSuffixIcon = '';
-                }
-            }
+        computed : {
+            ...mapState({
+                account : state => state.accountLogin.account,
+                phone : state => state.accountLogin.phone,
+                password : state => state.accountLogin.password,
+                userId : state => state.accountLogin.userId,
+                userAgreement : state => state.userAgreement
+            }),
+            ...mapGetters([
+                'inputSuffixIcon',
+                'users'
+            ])
         }, 
         mounted : function () {
             this.getUsers();
@@ -52,47 +57,41 @@
             'dropdown-dialog' : DropdownDialog
         },
         methods: {
+            ...mapMutations ([
+                'updateAccount',
+                'updatePassword',
+                'switchDropdown',
+                'switchUserAgreement',
+                'checkUserAgreement',
+                'checkAccount',
+                'checkPassword'
+            ]),
             accountLogin : function () {
-                if (this.checked === false) {
-                    this.$message({
-                        message : '请同意用户协议',
-                        type : 'error',
-                        center : true
-                    });
+                if(!this.checkUserAgreement({'vue' : this})) {
                     return false;
                 }
-                if(this.password === undefined || this.password === "") {
-                    this.$message({
-                        message : '密码不能为空',
-                        type : 'error',
-                        center : true
-                    });
+                if(!this.checkAccount({'account' : this.account , 'vue' : this})) {
                     return false;
                 }
-                if(!(/^[a-zA-Z0-9]{6,20}$/.test( this.password ))) {
-                    this.$message({
-                        message : '密码格式错误，请重填',
-                        type : 'error',
-                        center : true
-                    });
+                if(!this.checkPassword({'password' : this.password , 'vue' : this})) {
                     return false;
                 }
                 let accountData ;
                 if(this.getFromStorage) {
                     let realPwd = '';
                     for(let i =0 ; i < this.users.length; ++i) {
-                        if(this.$store.state.accountLogin.account === this.users[i].phone || this.$store.state.accountLogin.account === this.users[i].account) {
+                        if(this.account === this.users[i].phone || this.account === this.users[i].account) {
                             realPwd = this.users[i].password;
                         }
                     }
                     accountData = {
-                        account : this.$store.state.accountLogin.account,
+                        account : this.account,
                         password : realPwd
                     };
                 }else {
                     let hashPwd = this.$md5(this.password);
                     accountData = {
-                        account : this.$store.state.accountLogin.account,
+                        account : this.account,
                         password : hashPwd
                     };
                 }
@@ -131,7 +130,7 @@
                                     name: 'BindPhone',
                                     params : {
                                         userId : user.userId,
-                                        account : this.$store.state.accountLogin.account
+                                        account : this.account
                                     }
                                 });
                             }else {
@@ -148,37 +147,35 @@
                     });
             },
             getUsers : function () {
-                this.users = JSON.parse(localStorage.getItem('monster-user'));
-                this.changInput(this.users[this.users.length-1]);
+                this.changeInput(this.users[this.users.length-1]);
                 this.getFromStorage = true;
             },
             changeGetWay : function () {
                 this.getFromStorage = false;
             },
             closeDropdown : function (data) {
-                if(this.users.length > 1) {
-                    this.inputSuffixIcon = 'el-icon-ali-unfold el-input__icon';
-                }else{
-                    this.inputSuffixIcon = '';
-                }
                 this.$store.state.dropdownDialog.show = data;
                 this.getFromStorage = true;
             },
-            showDropdown : function () {
-                this.inputSuffixIcon = 'el-icon-ali-packup el-input__icon';
-                this.$store.state.dropdownDialog.show = !this.$store.state.dropdownDialog.show;
-            },
-            changInput : function (user) {
-                this.$store.state.accountLogin.account = (user.phone === undefined || user.phone === '') ? user.account : user.phone;
-                this.password = user.password.slice(1,7);
+            changeInput : function (user) {
+                let accountParam= (user.phone === undefined || user.phone === '') ? user.account : user.phone;
+                let pwdParam = user.password.slice(1,7);
+                this.updateAccount(accountParam);
+                this.updatePassword(pwdParam);
             },
             deleteUser : function (userId) {
                 for(let i=0;i<this.users.length; ++i) {
                     if(this.users[i].userId === userId) {
                         this.users.splice(i,1);
-                    }
+                    }   
                 }
                 localStorage.setItem('monster-user',JSON.stringify(this.users));
+            },
+            changeAccount(e) {
+                this.updateAccount(e);
+            },
+            changePassword(e) {
+                this.updatePassword(e);
             }
         }
     }

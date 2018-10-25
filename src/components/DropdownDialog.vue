@@ -42,7 +42,7 @@
                 if(column.fixed === 'right') {
                     this.$emit('deleteUser',row.userId);
                 }else{
-                    this.$emit('changInput',row);
+                    this.$emit('changeInput',row);
                 }
                 this.$store.state.dropdownDialog.show = false;
             },

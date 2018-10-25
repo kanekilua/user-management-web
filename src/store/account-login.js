@@ -3,28 +3,30 @@ export default {
         account : '',
         phone : '',
         password : '',
-        userId : 0,
-        inputSuffixIcon : '',
-        users : []
+        userId : 0
     },
-    mutations : {
-        checkAccount : function () {
-            if(state.account === undefined || state.account === "") {
-                this.$message({
-                    message : '账号不能为空',
-                    type : 'error',
-                    center : true
-                });
-                return false;
+    getters : {
+        inputSuffixIcon : (state, getters, rootState, rootGetters) => {
+            if(getters.users.length > 1) {
+                if(rootState.dropdownDialog.show === false) {
+                    return 'el-icon-ali-unfold el-input__icon';
+                }else {
+                    return 'el-icon-ali-packup el-input__icon';
+                }
+            }else {
+                return '';
             }
-            if(!(/^[a-zA-Z0-9]{6,12}$/.test( state.account ))) {
-                this.$message({
-                    message : '账号格式错误，请重填',
-                    type : 'error',
-                    center : true
-                });
-                return false;
-            }
+        },
+        users : () => {
+            return JSON.parse(localStorage.getItem('monster-user'));
+        }
+    },
+    mutations: {
+        updateAccount : function (state,param) {
+            state.account = param;
+        },
+        updatePassword : function (state,param) {
+            state.password = param;
         }
     }
 }
